@@ -5,6 +5,8 @@ from appium import webdriver
 import shutil
 import time
 import base64
+import BaseFunction_Lovezuoye
+import datetime
 
 pkgname = "com.knowbox.ocr"
 mainactivity = "com.knowbox.ocr.MainActivity"
@@ -18,7 +20,7 @@ def syncpic_paizuoye():
 
 
     print("step 2:Detect path in PC:", nowpath)
-
+    counter=0
     for path,childpath,files in os.walk(nowpath):
         for i in range(len(files)):
             if files[i][-3:] == 'jpg' or files[i][-3:] == "JPG" or files[i][-3:] == 'PNG' or files[i][-3:] == 'png':
@@ -59,7 +61,7 @@ def syncpic_paizuoye():
 
 
                 finaldata = str(base64_data,encoding='utf-8')
-                print(finaldata)
+                #print(finaldata)
                 driver.push_file("/storage/emulated/legacy/DCIM/Camera/test.jpg",finaldata)
 
 
@@ -83,21 +85,28 @@ def syncpic_paizuoye():
                 # start_appium = "appium -a 127.0.0.1 -p 4723 --session-override"
                 # step0 = subprocess.Popen(start_appium, shell=True, stdout=subprocess.PIPE)
                 # print("RUN SUCCESS")
+                try:
+                    driver.implicitly_wait(10)
+                    driver.find_element_by_xpath("//android.widget.ImageView[@resource-id='com.knowbox.ocr:id/action']").click()
+                    driver.find_element_by_xpath("//android.widget.ImageView[@resource-id='com.knowbox.ocr:id/tv_album']").click()
 
-                driver.implicitly_wait(30)
-                driver.find_element_by_xpath("//android.widget.ImageView[@resource-id='com.knowbox.ocr:id/action']").click()
-                driver.find_element_by_xpath("//android.widget.ImageView[@resource-id='com.knowbox.ocr:id/tv_album']").click()
+                    driver.find_element_by_xpath("//android.view.View[@resource-id='com.knowbox.ocr:id/check_view']").click()
+                    driver.find_element_by_xpath("//android.widget.TextView[@resource-id='com.knowbox.ocr:id/button_apply']").click()
+                except:
+                    continue
 
-                driver.find_element_by_xpath("//android.view.View[@resource-id='com.knowbox.ocr:id/check_view']").click()
-                driver.find_element_by_xpath("//android.widget.TextView[@resource-id='com.knowbox.ocr:id/button_apply']").click()
-
-                time.sleep(20)
+                time.sleep(10)
                 img_folder = os.getcwd() + '\\screenshots\\'
-                timer = time.strftime('%m%d', time.localtime(time.time()))
+                #timer = time.strftime('%m%d', time.localtime(time.time()))
+                nowtime = datetime.datetime.now()
+                gettime = nowtime + datetime.timedelta(days=-2)
+                timer = gettime.strftime('%m%d')
                 screen_save_path = files[i] + "_paizuoye" + "__" + timer + '.png'
                 print("STEP4 : SCREENSHOT IN "+ img_folder)
-                driver.get_screenshot_as_file(screen_save_path)
+                print("NO." + str(counter)+"FINISHED")
+                driver.get_screenshot_as_file(img_folder + screen_save_path)
                # driver.reset()
+                counter=counter+1
                 driver.quit()
 
 
@@ -105,4 +114,5 @@ def syncpic_paizuoye():
 
 
 
-syncpic_paizuoye()
+#syncpic_paizuoye()
+#BaseFunction_Lovezuoye.syncpic_lovezuoye()

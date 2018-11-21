@@ -5,12 +5,13 @@ from appium import webdriver
 import shutil
 import time
 import base64
+import datetime
 
 pkgname = "ai.zuoye.app"
 mainactivity = "com.homework.app.ui.activity.WelcomeActivity"
 
 #传递图片到手机中
-def syncpic_paizuoye():
+def syncpic_lovezuoye():
     #传入图片
     nowpath = os.getcwd() + "\\questionPic"
     sdcard_path = "/storage/sdcard0/DCIM/Camera"
@@ -18,7 +19,7 @@ def syncpic_paizuoye():
 
 
     print("step 2:Detect path in PC:", nowpath)
-
+    counter=0
     for path,childpath,files in os.walk(nowpath):
         for i in range(len(files)):
             if files[i][-3:] == 'jpg' or files[i][-3:] == "JPG" or files[i][-3:] == 'PNG' or files[i][-3:] == 'png':
@@ -60,7 +61,7 @@ def syncpic_paizuoye():
 
 
                 finaldata = str(base64_data,encoding='utf-8')
-                print(finaldata)
+                #print(finaldata)
                 driver.push_file("/storage/emulated/legacy/DCIM/Camera/test.jpg",finaldata)
 
 
@@ -84,21 +85,25 @@ def syncpic_paizuoye():
                 # start_appium = "appium -a 127.0.0.1 -p 4723 --session-override"
                 # step0 = subprocess.Popen(start_appium, shell=True, stdout=subprocess.PIPE)
                 # print("RUN SUCCESS")
-
-                driver.implicitly_wait(30)
-                driver.find_element_by_xpath("//android.widget.ImageView[@resource-id='ai.zuoye.app:id/lav_camera']").click()
-                driver.find_element_by_xpath("//android.widget.ImageView[@resource-id='ai.zuoye.app:id/iv_album']").click()
-
-                driver.find_element_by_xpath("//android.widget.GridView[@resource-id='ai.zuoye.app:id/grid']/android.widget.FrameLayout[1]/android.widget.TextView[1]").click()
-                driver.find_element_by_xpath("//android.widget.Button[@resource-id='ai.zuoye.app:id/commit']").click()
-
-                time.sleep(15)
+                try:
+                    driver.implicitly_wait(10)
+                    driver.find_element_by_xpath("//android.widget.ImageView[@resource-id='ai.zuoye.app:id/lav_camera']").click()
+                    driver.find_element_by_xpath("//android.widget.ImageView[@resource-id='ai.zuoye.app:id/iv_album']").click()
+                    driver.find_element_by_xpath("//android.widget.GridView[@resource-id='ai.zuoye.app:id/grid']/android.widget.FrameLayout[1]/android.widget.TextView[1]").click()
+                    driver.find_element_by_xpath("//android.widget.Button[@resource-id='ai.zuoye.app:id/commit']").click()
+                except:
+                    continue
+                time.sleep(10)
                 img_folder = os.getcwd() + '\\screenshots\\'
-                timer = time.strftime('%m%d', time.localtime(time.time()))
+                nowtime = datetime.datetime.now()
+                gettime = nowtime + datetime.timedelta(days=-2)
+                timer = gettime.strftime('%m-%d')
                 screen_save_path =  files[i] + "_lovezuoye" + "__"+ timer +'.png'
                 print("STEP4 : SCREENSHOT IN "+ img_folder)
-                driver.get_screenshot_as_file(screen_save_path)
+                print("NO." + str(counter) + "FINISHED")
+                driver.get_screenshot_as_file(img_folder + screen_save_path)
                # driver.reset()
+                counter=counter+1
                 driver.quit()
 
 
@@ -106,4 +111,3 @@ def syncpic_paizuoye():
 
 
 
-syncpic_paizuoye()
